@@ -17,7 +17,7 @@ version = Version [0,1,0,0] []
 bindir, libdir, datadir, libexecdir, sysconfdir :: FilePath
 
 bindir     = "/home/ouanixi/.cabal/bin"
-libdir     = "/home/ouanixi/.cabal/lib/x86_64-linux-ghc-7.10.1/order_78sm7bpiIlNIeZYRCrBsyO"
+libdir     = "/home/ouanixi/.cabal/lib/x86_64-linux-ghc-7.10.1/order-deps-0.1.0.0-8ynTSnyQfLjC9zIsJ0tg2k"
 datadir    = "/home/ouanixi/.cabal/share/x86_64-linux-ghc-7.10.1/order-deps-0.1.0.0"
 libexecdir = "/home/ouanixi/.cabal/libexec"
 sysconfdir = "/home/ouanixi/.cabal/etc"

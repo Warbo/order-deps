@@ -1,0 +1,9 @@
+Test suite myTest: RUNNING...
+Tests
+  Properties
+    dingy: OK
+      +++ OK, passed 100 tests.
+
+All 1 tests passed (0.00s)
+Test suite myTest: PASS
+Test suite logged to: dist/test/order-deps-0.1.0.0-myTest.log

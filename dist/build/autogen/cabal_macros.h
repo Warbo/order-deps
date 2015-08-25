@@ -28,8 +28,8 @@
   (major1) == 0 && (major2) <  5 || \
   (major1) == 0 && (major2) == 5 && (minor) <= 6)
 
-/* package text-1.2.1.3 */
-#define VERSION_text "1.2.1.3"
+/* package text-1.2.1.1 */
+#define VERSION_text "1.2.1.1"
 #define MIN_VERSION_text(major1,major2,minor) (\
   (major1) <  1 || \
   (major1) == 1 && (major2) <  2 || \
@@ -42,12 +42,12 @@
   (major1) == 3 && (major2) <  1 || \
   (major1) == 3 && (major2) == 1 && (minor) <= 4)
 
-/* tool cpphs-1.19.2 */
-#define TOOL_VERSION_cpphs "1.19.2"
+/* tool cpphs-1.19.3 */
+#define TOOL_VERSION_cpphs "1.19.3"
 #define MIN_TOOL_VERSION_cpphs(major1,major2,minor) (\
   (major1) <  1 || \
   (major1) == 1 && (major2) <  19 || \
-  (major1) == 1 && (major2) == 19 && (minor) <= 2)
+  (major1) == 1 && (major2) == 19 && (minor) <= 3)
 
 /* tool gcc-4.9.3 */
 #define TOOL_VERSION_gcc "4.9.3"
@@ -119,5 +119,5 @@
   (major1) == 2 && (major2) <  23 || \
   (major1) == 2 && (major2) == 23 && (minor) <= 0)
 
-#define CURRENT_PACKAGE_KEY "order_78sm7bpiIlNIeZYRCrBsyO"
+#define CURRENT_PACKAGE_KEY "order_8ynTSnyQfLjC9zIsJ0tg2k"
 
