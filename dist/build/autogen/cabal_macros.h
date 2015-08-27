@@ -35,6 +35,20 @@
   (major1) == 1 && (major2) <  2 || \
   (major1) == 1 && (major2) == 2 && (minor) <= 1)
 
+/* package tasty-0.10.1.2 */
+#define VERSION_tasty "0.10.1.2"
+#define MIN_VERSION_tasty(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  10 || \
+  (major1) == 0 && (major2) == 10 && (minor) <= 1)
+
+/* package tasty-quickcheck-0.8.3.2 */
+#define VERSION_tasty_quickcheck "0.8.3.2"
+#define MIN_VERSION_tasty_quickcheck(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  8 || \
+  (major1) == 0 && (major2) == 8 && (minor) <= 3)
+
 /* tool alex-3.1.4 */
 #define TOOL_VERSION_alex "3.1.4"
 #define MIN_TOOL_VERSION_alex(major1,major2,minor) (\
@@ -119,5 +133,5 @@
   (major1) == 2 && (major2) <  23 || \
   (major1) == 2 && (major2) == 23 && (minor) <= 0)
 
-#define CURRENT_PACKAGE_KEY "order_8ynTSnyQfLjC9zIsJ0tg2k"
+#define CURRENT_PACKAGE_KEY "order_8a4OWpCL4xFEo51GEZzymd"
 

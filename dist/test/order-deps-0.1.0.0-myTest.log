@@ -1,9 +1,9 @@
 Test suite myTest: RUNNING...
 Tests
   Properties
-    dingy: OK
+    parsed: OK (0.85s)
       +++ OK, passed 100 tests.
 
-All 1 tests passed (0.00s)
+All 1 tests passed (0.85s)
 Test suite myTest: PASS
 Test suite logged to: dist/test/order-deps-0.1.0.0-myTest.log

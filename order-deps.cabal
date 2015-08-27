@@ -25,7 +25,7 @@ executable order-deps
 
 test-suite myTest
   main-is:             Main.hs
-  hs-source-dirs:      test-suite
+  hs-source-dirs:      test-suite, src
   default-language:    Haskell2010
   type:                exitcode-stdio-1.0
-  build-depends:       base, tasty, tasty-quickcheck
+  build-depends:       base, tasty, tasty-quickcheck, text, aeson, bytestring, containers
