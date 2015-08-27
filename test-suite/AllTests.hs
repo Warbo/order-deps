@@ -20,6 +20,8 @@ import           Test.Tasty.QuickCheck as QC
 --                        return (head : tail)
 -- you can use that to generate a list of recursive calls
 
+geomList :: Gen a -> Gen [a]
+geomList g = oneof [return <$> g, (:) <$> g <*> geomList g]
 
 instance Arbitrary Text where
   arbitrary = do
@@ -28,7 +30,7 @@ instance Arbitrary Text where
 
 instance Arbitrary ASTId where
   arbitrary = do
-                r <- oneof [pure Nothing, Just <$> (resize 4 arbitrary)]
+                r <- oneof [pure Nothing, Just <$> geomList arbitrary]
                 ASTId <$> arbitrary <*> arbitrary <*> arbitrary <*> pure r
 
 
