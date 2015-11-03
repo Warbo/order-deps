@@ -7,9 +7,6 @@ import           Jparse
 import           Test.Tasty
 import           Test.Tasty.QuickCheck as QC
 
-
-
-
 -- | Use a sized generator to generate a list of values whose combined size
 -- matches the given number.
 -- divideBetween :: (Int -> Gen a) -> Int -> Gen [a]
@@ -28,34 +25,24 @@ import           Test.Tasty.QuickCheck as QC
 --         } deriving (Show, Generic, Eq)
 
 geomList :: Gen a -> Gen [a]
-geomList g = oneof [return <$> g, (:) <$> g <*> geomList g]
+geomList g = do x <- g
+                oneof [pure [], (x:) <$> geomList g]
 
 instance Arbitrary Text where
-  arbitrary = do
-    t <- fmap pack arbitrary
-    return t
+  arbitrary = pack <$> arbitrary
 
 instance Arbitrary ASTId where
-  arbitrary = do
-                r <- oneof [pure Nothing, Just <$> geomList arbitrary]
-                ASTId <$> arbitrary <*> arbitrary <*> arbitrary <*> pure r
-
+  arbitrary = let r = oneof [pure Nothing, Just <$> geomList arbitrary]
+               in ASTId <$> arbitrary <*> arbitrary <*> arbitrary <*> r
 
 tests :: TestTree
-tests = testGroup "Tests" [properties]
+tests = testGroup "Tests" [QC.testProperty "parsed"    prop_parse,
+                           QC.testProperty "extracted" prop_extract]
 
-properties :: TestTree
-properties = testGroup "Properties" [QC.testProperty "parsed" prop_parse_correct,
-                                     QC.testProperty "extracted" prop_extract_correct]
+prop_parse :: ASTId -> Bool
+prop_parse x =  (decode . encode $ x)  == Just x
 
-prop_parse_correct :: ASTId -> Bool
-prop_parse_correct x =  (decode . encode $ x)  == Just x
-
-prop_extract_correct :: ASTId -> Bool
-prop_extract_correct a@(ASTId _ _ _ Nothing )  = let  (_, _ ,t) = extractGraphable a
-                                                 in t == []
-prop_extract_correct a@(ASTId _ _ _ (Just x) ) = let  (_, _ ,t) = extractGraphable a
-                                                in (length x) == length t
-
-
-
+prop_extract :: ASTId -> Bool
+prop_extract a@(ASTId _ _ _ s) = case (s, extractGraphable a) of
+                                      (Nothing, (_, _, t)) ->        t == []
+                                      (Just x,  (_, _, t)) -> length t == length x
