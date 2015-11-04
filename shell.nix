@@ -4,8 +4,8 @@ let
 
   inherit (nixpkgs) pkgs;
 
-  f = { mkDerivation, aeson, base, bytestring, containers, stdenv
-      , tasty, tasty-quickcheck, text
+  f = { mkDerivation, aeson, base, bytestring, containers, HS2AST
+      , stdenv, tasty, tasty-quickcheck, text
       }:
       mkDerivation {
         pname = "order-deps";
@@ -14,10 +14,10 @@ let
         isLibrary = false;
         isExecutable = true;
         executableHaskellDepends = [
-          aeson base bytestring containers text
+          aeson base bytestring containers HS2AST text
         ];
         testHaskellDepends = [
-          aeson base bytestring containers tasty tasty-quickcheck text
+          aeson base bytestring containers HS2AST tasty tasty-quickcheck text
         ];
         homepage = "https://github.com/ouanixi/order-deps.git";
         description = "Toplogical sort of AST's as per their dependencies";
