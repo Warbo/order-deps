@@ -64,8 +64,8 @@ prop_combinesCycles i1 i2 = i1 /= i2 ==>
        _                   -> False
 
 prop_combinesIndependent i1 i2 = i1 /= i2 ==>
-  case bigGroup [ASTId { aId = i1, aDeps = [] },
-                 ASTId { aId = i2, aDeps = [] }] of
+  case group [ASTId { aId = i1, aDeps = [] },
+              ASTId { aId = i2, aDeps = [] }] of
        [DG.CyclicSCC as] -> let as' = map atomToId as
                              in as' `elem` [[i1, i2], [i2, i1]]
 
