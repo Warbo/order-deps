@@ -16,24 +16,36 @@ build-type:          Simple
 -- extra-source-files:
 cabal-version:       >=1.10
 
+library
+  exposed-modules:     Grapher
+                     , Types
+  build-depends:       base
+                     , array
+                     , HS2AST
+                     , containers >=0.5 && <0.6
+                     , text >=1.2 && <1.3
+                     , aeson >=0.9 && <0.10
+                     , bytestring >=0.10 && <0.11
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+                     
 executable order-deps
   main-is:             Main.hs
   other-extensions:    DeriveGeneric, OverloadedStrings
   build-depends:       base >=4.8 && <4.9
-                     , aeson >=0.9 && <0.10
+                     , order-deps
                      , bytestring >=0.10 && <0.11
-                     , containers >=0.5 && <0.6
-                     , text >=1.2 && <1.3
-                     , HS2AST
+
   hs-source-dirs:      src
   default-language:    Haskell2010
 
 test-suite tests
   main-is:             Main.hs
-  hs-source-dirs:      tests, src
+  hs-source-dirs:      tests
   default-language:    Haskell2010
   type:                exitcode-stdio-1.0
   build-depends:       base
+                     , order-deps
                      , tasty
                      , tasty-quickcheck
                      , text
