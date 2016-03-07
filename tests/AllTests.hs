@@ -34,6 +34,10 @@ instance Arbitrary ASTId where
                    , aDeps = d
                    }
 
+instance Arbitrary a => Arbitrary (DG.SCC a) where
+  arbitrary = oneof [DG.AcyclicSCC <$> arbitrary,
+                     DG.CyclicSCC  <$> listOf1 arbitrary]
+
 tests :: TestTree
 tests = testGroup "Tests" [
   QC.testProperty "Decode and encode are inverse"   prop_parse,
@@ -42,7 +46,8 @@ tests = testGroup "Tests" [
   QC.testProperty "Independent IDs are grouped"     prop_combinesIndependent,
   QC.testProperty "Leaves are taken from graph"     prop_leavesAreInGraph,
   QC.testProperty "Leaves have no dependencies"     prop_leavesHaveNoDeps,
-  QC.testProperty "Can get deps of SCCs"            prop_sccDepsMatch]
+  QC.testProperty "Can get deps of SCCs"            prop_sccDepsMatch,
+  QC.testProperty "At least one SCC has no deps"    prop_alwaysDepLessScc]
 
 prop_parse :: ASTId -> Bool
 prop_parse x =  (decode . encode $ x)  == Just x
@@ -59,8 +64,8 @@ prop_combinesCycles i1 i2 = i1 /= i2 ==>
        _                   -> False
 
 prop_combinesIndependent i1 i2 = i1 /= i2 ==>
-  case Grapher.group [ASTId { aId = i1, aDeps = [] },
-                      ASTId { aId = i2, aDeps = [] }] of
+  case bigGroup [ASTId { aId = i1, aDeps = [] },
+                 ASTId { aId = i2, aDeps = [] }] of
        [DG.CyclicSCC as] -> let as' = map atomToId as
                              in as' `elem` [[i1, i2], [i2, i1]]
 
@@ -77,9 +82,12 @@ prop_leavesHaveNoDeps ids' = counterexample debug test
         debug   = show (("ids", ids), ("leaves", leafIds))
 
 prop_sccDepsMatch ids = all (`elem` astDs) sccDs && all (`elem` sccDs) astDs
-  where sccDs = concatMap sccDeps (group' ids)
+  where sccDs = concatMap sccDeps (group' (map extractGraphable ids))
         astDs = filter (not . inIds) (concatMap (map idToAtom . aDeps) ids)
         inIds x = any ((== atomToId x) . aId) ids
+
+prop_alwaysDepLessScc a as = not (null (depLess (group' xs)))
+  where xs = stripUnknownDeps (a:as)
 
 -- Helpers
 
