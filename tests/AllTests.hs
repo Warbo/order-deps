@@ -44,10 +44,12 @@ tests = testGroup "Tests" [
   QC.testProperty "Extracting graph preserves size" prop_extract,
   QC.testProperty "Cyclic dependencies are grouped" prop_combinesCycles,
   QC.testProperty "Independent IDs are grouped"     prop_combinesIndependent,
-  QC.testProperty "Leaves are taken from graph"     prop_leavesAreInGraph,
-  QC.testProperty "Leaves have no dependencies"     prop_leavesHaveNoDeps,
   QC.testProperty "Can get deps of SCCs"            prop_sccDepsMatch,
-  QC.testProperty "At least one SCC has no deps"    prop_alwaysDepLessScc]
+  QC.testProperty "At least one SCC has no deps"    prop_alwaysDepLessScc,
+  QC.testProperty "Group contains all inputs"       prop_bigSCCAll,
+  QC.testProperty "Have another SCC"                prop_haveNextSCC,
+  QC.testProperty "Combining SCCs preserves length" prop_combineSCCsLength,
+  QC.testProperty "SCCs only contain cyclic deps"   prop_sccMinimalCycles]
 
 prop_parse :: ASTId -> Bool
 prop_parse x =  (decode . encode $ x)  == Just x
@@ -69,31 +71,46 @@ prop_combinesIndependent i1 i2 = i1 /= i2 ==>
        [DG.CyclicSCC as] -> let as' = map atomToId as
                              in as' `elem` [[i1, i2], [i2, i1]]
 
-prop_leavesAreInGraph ids' = counterexample debug test
-  where test    = all (`elem` ids) leafIds
-        ids     = fillGraph ids'
-        leafIds = leaves ids
-        debug   = show (("ids", ids), ("leaves", leafIds))
-
-prop_leavesHaveNoDeps ids' = counterexample debug test
-  where test    = all (null . aDeps) leafIds
-        ids     = fillGraph ids'
-        leafIds = leaves ids
-        debug   = show (("ids", ids), ("leaves", leafIds))
-
 prop_sccDepsMatch ids = all (`elem` astDs) sccDs && all (`elem` sccDs) astDs
-  where sccDs = concatMap sccDeps (group' (map extractGraphable ids))
+  where sccDs = concatMap sccDeps (DG.stronglyConnCompR (map extractGraphable ids))
         astDs = filter (not . inIds) (concatMap (map idToAtom . aDeps) ids)
         inIds x = any ((== atomToId x) . aId) ids
 
-prop_alwaysDepLessScc a as = not (null (depLess (group' xs)))
+prop_alwaysDepLessScc a as = not (null (depLess (DG.stronglyConnCompR xs)))
   where xs = stripUnknownDeps (a:as)
+
+prop_bigSCCAll aids = counterexample debug test
+  where test    = all (`elem` grouped) atoms
+        grouped = DG.flattenSCCs (group aids)
+        atoms   = map (idToAtom . aId) aids
+        debug   = show (("grouped", grouped), ("atoms", atoms))
+
+prop_haveNextSCC as = distinct as ==> case nextSCC as of
+    Nothing -> null as
+    Just x  -> not (null (DG.flattenSCC x))
+  where distinct [] = True
+        distinct (x:xs) = x `notElem` xs && distinct xs
+
+prop_combineSCCsLength :: [DG.SCC Int] -> Property
+prop_combineSCCsLength sccs = not (null sccs) ==> case combineSCCs sccs of
+  Just x -> length (DG.flattenSCCs sccs) == length (DG.flattenSCC x)
+
+prop_sccMinimalCycles as' = not (null as) && distinctNames as ==>
+    case nextSCC as of
+         Just x -> let x' = DG.flattenSCC x
+                    in all (check x') x'
+  where as = stripUnknownDeps as'
+        check xs x     = x `elem` xs && (cyclicOK x xs || acyclicOK x xs)
+        cyclicOK  x xs = findCycle [] (getFull x) xs
+        acyclicOK x xs = all (`notElem` xs) (depAtoms (getFull x))
+        getFull a      = head . filter ((== a) . nameAtom) $ as
 
 -- Helpers
 
-fillGraph :: [ASTId] -> [ASTId]
-fillGraph [] = []
-fillGraph (aid:aids) = aid:aids ++ map simple unknownDeps
-  where unknownDeps = filter (`notElem` ids) (aDeps aid)
-        ids         = map aId aids
-        simple x    = ASTId { aId = x, aDeps = [] }
+distinctNames []     = True
+distinctNames (x:xs) = nameAtom x `notElem` map nameAtom xs && distinctNames xs
+
+findCycle seen x xs = case depAtoms x of
+  []     -> False
+  (d:ds) -> nameAtom x == d ||
+            findCycle (d:seen) x (filter (`notElem` seen) ds ++ xs)
