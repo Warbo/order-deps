@@ -101,7 +101,7 @@ prop_sccMinimalCycles as' = not (null as) && distinctNames as ==>
                     in all (check x') x'
   where as = stripUnknownDeps as'
         check xs x     = x `elem` xs && (cyclicOK x xs || acyclicOK x xs)
-        cyclicOK  x xs = findCycle [] (getFull x) xs
+        cyclicOK  x    = findCycle [] (getFull x)
         acyclicOK x xs = all (`notElem` xs) (depAtoms (getFull x))
         getFull a      = head . filter ((== a) . nameAtom) $ as
 
