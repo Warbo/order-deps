@@ -308,7 +308,7 @@ function testNoDepsAfter {
     for EX in example*.json
     do
         # DEPS stores the dependencies which have been asked for so far
-        DEPS=""
+        DEPS="[]"
         while read -r SCC
         do
             while read -r ELEM
@@ -354,21 +354,36 @@ function testSiblingDepsAreCyclic {
     done
 }
 
+function testAllTestsRunning {
+    # We use the TESTS variable to allow selectively turning tests on and off.
+    # This test ensures that we're informed when tests are turned off.
+    while read -r DECLARED
+    do
+        FOUND=0
+        for USED in "${TESTS[@]}"
+        do
+            [[ "x$DECLARED" = "x$USED" ]] && FOUND=1
+        done
+        [[ "$FOUND" -eq 1 ]] || fail "Test '$DECLARED' wasn't run"
+    done < <(declare -F | cut -d ' ' -f 3- | grep "^test")
+}
+
 # Test invocation
 msg "Running tests"
 
-TESTS=( #testCabalBuild
-        #testCabalTest
+TESTS=( testCabalBuild
+        testCabalTest
         testExamplesAreJson
-        #testOutputsAreJson
+        testOutputsAreJson
         testExampleFields
-        #testNoDepsAfter
+        testNoDepsAfter
         testInArrayWorksAsExpected
         testNoVersionInExamplePackages
         testNoVersionInExampleDependencies
         testContainsVersionWorksAsExpected
         testDepsOfWorksAsExpected
         testSiblingDepsAreCyclic
+        testAllTestsRunning
       )
 for TEST in "${TESTS[@]}"
 do
@@ -376,5 +391,7 @@ do
     "$TEST"
     msg "PASS: $TEST"
 done
+
+testAllTestsRunning # In case we're fiddling with TESTS
 
 msg "All tests pass"
