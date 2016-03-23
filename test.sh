@@ -22,6 +22,7 @@ function inArray {
     isId      "$1"
     isIdArray "$2"
 
+    # shellcheck disable=SC2016
     COUNT=$(echo "$2" | jq -c --argjson ast "$1" \
                            'map(select(.name == $ast.name and .module == $ast.module and .package == $ast.package)) | length')
     [[ "$COUNT" -gt 0 ]]
@@ -48,6 +49,7 @@ function assertType {
 }
 
 function assertAttribute {
+    # shellcheck disable=SC2016
     HASATTRIBUTERESULT=$(echo "$1" | jq --arg attr "$2" 'has($attr)') ||
         fail "Couldn't check for '$2' attribute in '$1'"
 
@@ -55,6 +57,7 @@ function assertAttribute {
 }
 
 function assertEqual {
+    # shellcheck disable=SC2016
     JQEQUALRESULT=$(jq -n --argjson x "$1" --argjson y "$2" '$x == $y') ||
         fail "Couldn't compare '$1' with '$2'"
     [[ "x$JQEQUALRESULT" = "xtrue" ]]
@@ -127,6 +130,7 @@ function cacheDep {
 
 function calculateDepsOf {
     # Extracts the dependencies of $1 by looping through all entries in $EX
+    # shellcheck disable=SC2016
     jq -c --argjson arg "$1" \
           'map(select(.name == $arg.name and .module == $arg.module and .package == $arg.package)) | map(.dependencies) | . + [[]] | .[0]' < "$EX"
 }
@@ -170,6 +174,7 @@ function depsClosure {
         while read -r ID
         do
             isId "$ID"
+            # shellcheck disable=SC2016
             IDS=$(echo "$IDS" | jq --argfile deps <(depsOf "$ID") \
                                    '. + $deps | unique')
         done < <(echo "$IDS" | jq -c '.[]')
@@ -265,6 +270,7 @@ function testExampleFields {
         FIELDS=( name module package arity quickspecable type ast dependencies )
         for FIELD in "${FIELDS[@]}"
         do
+            # shellcheck disable=SC2016
             RESULT=$(jq --arg field "$FIELD" 'map(has($field)) | all' < "$EX")
             [[ "x$RESULT" = "xtrue" ]] ||
                 fail "File '$EX' missing some '$FIELD' fields"
@@ -273,6 +279,7 @@ function testExampleFields {
         FIELDS=( name package module )
         for FIELD in "${FIELDS[@]}"
         do
+            # shellcheck disable=SC2016
             RESULT=$(jq --arg field "$FIELD" \
                         '[.[] | .dependencies | .[] | has($field)] | all' < "$EX")
             [[ "x$RESULT" = "xtrue" ]] ||
@@ -321,6 +328,7 @@ function testNoDepsAfter {
             while read -r ELEM
             do
                 # Remember which dependencies were asked for in this SCC
+                # shellcheck disable=SC2016
                 DEPS=$(echo "$DEPS" | jq --argfile thesedeps <(depsOf "$ELEM") \
                                          '. + $thesedeps')
             done < <(echo "$SCC" | jq -c '.[]')
