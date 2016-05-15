@@ -97,9 +97,10 @@ prop_combineSCCsLength sccs = not (null sccs) ==> case combineSCCs sccs of
 
 prop_sccMinimalCycles as' = not (null as) && distinctNames as ==>
     case nextSCC as of
-         Just x -> let x' = DG.flattenSCC x
-                    in all (check x') x'
-  where as = stripUnknownDeps as'
+         Nothing -> error ("No SCCs found for " ++ show as)
+         Just x  -> let x' = DG.flattenSCC x
+                     in all (check x') x'
+  where as             = stripUnknownDeps as'
         check xs x     = x `elem` xs && (cyclicOK x xs || acyclicOK x xs)
         cyclicOK  x    = findCycle [] (getFull x)
         acyclicOK x xs = all (`notElem` xs) (depAtoms (getFull x))

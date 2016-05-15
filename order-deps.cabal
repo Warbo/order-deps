@@ -2,10 +2,10 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                order-deps
-version:             0.1.0.0
+version:             0.1.0.1
 synopsis:            Toplogical sort of AST's as per their dependencies
 -- description:
-homepage:            https://github.com/ouanixi/order-deps.git
+homepage:            http://chriswarbo.net/essays/repos/order-deps.html
 license:             GPL-3
 license-file:        LICENSE
 author:              Ouanis Seddaoui
@@ -22,19 +22,19 @@ library
   build-depends:       base
                      , array
                      , HS2AST
-                     , containers >=0.5 && <0.6
-                     , text >=1.2 && <1.3
-                     , aeson >=0.9 && <0.10
-                     , bytestring >=0.10 && <0.11
+                     , containers >=0.5
+                     , text >=1.2
+                     , aeson >=0.9
+                     , bytestring >=0.10
   hs-source-dirs:      src
   default-language:    Haskell2010
                      
 executable order-deps
   main-is:             Main.hs
   other-extensions:    DeriveGeneric, OverloadedStrings
-  build-depends:       base >=4.8 && <4.9
+  build-depends:       base >=4.8
                      , order-deps
-                     , bytestring >=0.10 && <0.11
+                     , bytestring >=0.10
 
   hs-source-dirs:      exe
   default-language:    Haskell2010
