@@ -1,0 +1,25 @@
+From 4bb2fe6109036a6ab1a1da0a502e49797d751092 Mon Sep 17 00:00:00 2001
+From: Chris Warburton <chriswarbo@gmail.com>
+Date: Mon, 7 Mar 2016 22:17:40 +0000
+Subject: [PATCH] Split off executable
+
+---
+ exe/Main.hs | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/exe/Main.hs b/exe/Main.hs
+new file mode 100644
+index 0000000000000000000000000000000000000000..039f35a06529959616d9742c75c71915a5c5e456
+--- /dev/null
++++ b/exe/Main.hs
+@@ -0,0 +1,10 @@
++module Main where
++
++import qualified Data.ByteString.Lazy       as B
++import qualified Data.ByteString.Lazy.Char8 as BC
++import           Grapher
++
++main :: IO ()
++main = do c <- B.getContents
++          let ps = parse c
++          BC.putStrLn (process ps)
