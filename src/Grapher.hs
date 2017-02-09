@@ -9,7 +9,7 @@ import           Data.Text  (Text)
 import           HS2AST.Types
 import           Types
 
-type Atom      =  (String, String, String)
+type Atom      =  (Text, Text, Text)
 type Graphable = [(Atom,   Atom,   [Atom])]
 
 instance Show v => Show (SCC v) where
