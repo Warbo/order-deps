@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
 module Grapher where
 
 import           Data.Aeson

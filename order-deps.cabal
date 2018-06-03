@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                order-deps
-version:             0.1.0.1
+version:             0.1.0.2
 synopsis:            Toplogical sort of AST's as per their dependencies
 -- description:
 homepage:            http://chriswarbo.net/essays/repos/order-deps.html
